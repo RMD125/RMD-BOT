@@ -1,20 +1,17 @@
-# Se placer au bon endroit
-cd ~/RMD-BOT
-
-# Modifier le package.json pour enlever puppeteer problématique
-cat > package.json << 'EOF'
 {
   "name": "rmd-bot",
   "version": "2.0.0",
-  "description": "Bot WhatsApp avancé",
+  "description": "Bot WhatsApp avancé par RMD125",
   "main": "main.js",
   "scripts": {
-    "start": "node main.js"
+    "start": "node main.js",
+    "dev": "node main.js"
   },
   "dependencies": {
-    "whatsapp-web.js": "^1.23.0",
+    "@whiskeysockets/baileys": "^6.4.0",
     "qrcode-terminal": "^0.12.0",
-    "axios": "^1.6.0"
+    "axios": "^1.6.0",
+    "fluent-ffmpeg": "^2.1.3",
+    "form-data": "^4.0.0"
   }
 }
-EOF
