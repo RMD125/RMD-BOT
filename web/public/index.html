@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RMDBOT v3 - 1500+ Commandes</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', Arial, sans-serif; 
+      background: #0a0a0a; 
+      color: #fff; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      min-height: 100vh;
+    }
+    .container { 
+      background: linear-gradient(145deg, #1a1a1a, #0d0d0d); 
+      padding: 50px; 
+      border-radius: 30px; 
+      text-align: center; 
+      max-width: 500px;
+      box-shadow: 0 0 50px rgba(0,255,136,0.1);
+      border: 1px solid #00ff8822;
+    }
+    h1 { 
+      color: #00ff88; 
+      font-size: 2.5em; 
+      margin-bottom: 5px;
+      text-shadow: 0 0 20px rgba(0,255,136,0.3);
+    }
+    .subtitle { color: #888; margin-bottom: 30px; font-size: 0.9em; }
+    .status { 
+      font-size: 24px; 
+      padding: 15px 30px; 
+      border-radius: 15px; 
+      display: inline-block;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+    .connected { 
+      background: #00ff8822; 
+      color: #00ff88; 
+      border: 2px solid #00ff88;
+      box-shadow: 0 0 30px rgba(0,255,136,0.1);
+    }
+    .disconnected { 
+      background: #ff004422; 
+      color: #ff0044; 
+      border: 2px solid #ff0044;
+    }
+    .info { color: #aaa; font-size: 0.9em; margin: 10px 0; }
+    .pair-form { 
+      margin-top: 30px; 
+      background: #111;
+      padding: 25px;
+      border-radius: 20px;
+      border: 1px solid #222;
+    }
+    .pair-form h3 { color: #00ff88; margin-bottom: 15px; }
+    input { 
+      padding: 14px 20px; 
+      border: 2px solid #333; 
+      border-radius: 12px; 
+      font-size: 16px; 
+      width: 200px; 
+      background: #1a1a1a; 
+      color: #fff;
+      transition: all 0.3s;
+    }
+    input:focus { 
+      outline: none; 
+      border-color: #00ff88;
+      box-shadow: 0 0 20px rgba(0,255,136,0.1);
+    }
+    button { 
+      padding: 14px 30px; 
+      border: none; 
+      border-radius: 12px; 
+      font-size: 16px; 
+      background: #00ff88; 
+      color: #000; 
+      font-weight: bold; 
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-left: 10px;
+    }
+    button:hover { 
+      background: #00cc77; 
+      transform: scale(1.02);
+      box-shadow: 0 0 30px rgba(0,255,136,0.2);
+    }
+    .result { 
+      margin-top: 20px; 
+      font-size: 18px; 
+      padding: 15px;
+      background: #0a0a0a;
+      border-radius: 12px;
+      border: 1px solid #222;
+      min-height: 50px;
+    }
+    .code-display { 
+      color: #00ff88; 
+      font-size: 2em; 
+      font-weight: bold;
+      letter-spacing: 5px;
+      text-shadow: 0 0 30px rgba(0,255,136,0.2);
+    }
+    .footer { 
+      margin-top: 30px; 
+      color: #555; 
+      font-size: 0.8em;
+      border-top: 1px solid #1a1a1a;
+      padding-top: 20px;
+    }
+    .badge {
+      display: inline-block;
+      background: #00ff8822;
+      color: #00ff88;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.8em;
+      margin: 5px;
+    }
+    @media (max-width: 500px) {
+      .container { padding: 30px 20px; }
+      input { width: 100%; margin-bottom: 10px; }
+      button { width: 100%; margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>🤖 RMDBOT v3</h1>
+  <div class="subtitle">1500+ commandes • 3 interfaces</div>
+  
+  <div id="status" class="status disconnected">⛔ Déconnecté</div>
+  <div class="info" id="botNumber">📱 Bot: Chargement...</div>
+  <div class="info">📦 Commandes: <span id="cmdCount">1500+</span></div>
+  
+  <div class="badge">⚡ WhatsApp</div>
+  <div class="badge">🌐 Web</div>
+  <div class="badge">📱 Telegram</div>
+  
+  <div class="pair-form">
+    <h3>🔑 Générer un code d'appairage</h3>
+    <input type="text" id="phone" placeholder="228XXXXXXXX" />
+    <button onclick="pair()">Obtenir</button>
+    <div id="pairResult" class="result">
+      <span style="color:#666">Entrez un numéro Togo (228...)</span>
+    </div>
+  </div>
+  
+  <div class="footer">
+    ⚡ RMDBOT v3 • 2026 • Tous droits réservés
+  </div>
+</div>
+
+<script>
+  async function fetchStatus() {
+    try {
+      const res = await fetch('/api/status');
+      const data = await res.json();
+      const statusEl = document.getElementById('status');
+      const botNumEl = document.getElementById('botNumber');
+      const cmdCountEl = document.getElementById('cmdCount');
+      
+      statusEl.textContent = data.status === 'connected' ? '✅ Connecté' : '⛔ Déconnecté';
+      statusEl.className = 'status ' + data.status;
+      botNumEl.textContent = `📱 Bot: ${data.botNumber}`;
+      cmdCountEl.textContent = data.commands || '1500+';
+    } catch (e) {
+      document.getElementById('status').textContent = '⚠️ Erreur';
+    }
+  }
+
+  async function pair() {
+    const phone = document.getElementById('phone').value;
+    const result = document.getElementById('pairResult');
+    
+    if (!phone) {
+      result.innerHTML = '❌ Entrez un numéro';
+      return;
+    }
+    
+    const cleanPhone = phone.replace(/[^0-9]/g, '');
+    if (!cleanPhone.startsWith('228') || cleanPhone.length < 8) {
+      result.innerHTML = '❌ Numéro invalide. Doit commencer par 228.';
+      return;
+    }
+    
+    result.innerHTML = '⏳ Génération en cours...';
+    
+    try {
+      const res = await fetch('/api/pair', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ number: cleanPhone })
+      });
+      const data = await res.json();
+      if (data.success) {
+        result.innerHTML = `✅ Code: <span class="code-display">${data.code}</span>`;
+      } else {
+        result.innerHTML = `❌ ${data.error}`;
+      }
+    } catch (e) {
+      result.innerHTML = '❌ Erreur de connexion';
+    }
+  }
+
+  // Enter key support
+  document.getElementById('phone').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') pair();
+  });
+
+  fetchStatus();
+  setInterval(fetchStatus, 10000);
+</script>
+</body>
+  </html>
